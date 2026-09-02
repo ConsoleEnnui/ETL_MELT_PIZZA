@@ -1,0 +1,42 @@
+name: ETL CI/CD - Melt Pizza Talca
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '*.ipynb'
+      - '*.py'
+
+jobs:
+  validar:
+    name: Validar notebook ETL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias de validación
+        run: pip install nbformat nbconvert
+
+      - name: Convertir notebook a script y validar sintaxis
+        run: |
+          jupyter nbconvert --to script Melt_pizza_talca.ipynb --output etl_validado
+          python -m py_compile etl_validado.py
+
+  desplegar:
+    name: Desplegar a Databricks (simulado)
+    needs: validar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simular despliegue del Job en Databricks
+        run: |
+          echo "Validación exitosa."
+          echo "Desplegando pipeline ETL actualizado al Job de Databricks..."
+          echo "En un entorno productivo, este paso usaría la Databricks REST API"
+          echo "y un token guardado como GitHub Secret (DATABRICKS_TOKEN) para"
+          echo "actualizar el notebook y disparar el Job de forma automática."
