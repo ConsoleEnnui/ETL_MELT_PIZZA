@@ -51,10 +51,13 @@ jobs:
           sleep 5
 
           echo "Creando almacenamiento S3 para la app y catálogo..."
-          aws --endpoint-url=http://localhost:4566 s3 mb s3://melt-pizza-talca-app
+          aws --endpoint-url=http://localhost:4566 s3 mb s3://melt-pizza-talca-app || true
+
+          echo "Generando manifiesto de despliegue del catálogo..."
+          echo "Catalogo Melt Pizza Talca v1.0 - Sincronizado $(date)" > version.txt
 
           echo "Publicando archivos de configuración de pedidos en el bucket..."
-          aws --endpoint-url=http://localhost:4566 s3 cp ./README.md s3://melt-pizza-talca-app/catalogo-v1.txt
+          aws --endpoint-url=http://localhost:4566 s3 cp version.txt s3://melt-pizza-talca-app/catalogo-v1.txt
 
           echo "Verificando artefactos desplegados en Flocci:"
           aws --endpoint-url=http://localhost:4566 s3 ls s3://melt-pizza-talca-app/
